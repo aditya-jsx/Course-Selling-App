@@ -9,14 +9,7 @@ app.use("/user", userRouter);
 app.use("/admin", adminRouter);
 app.use("/course", courseRouter);
 
-const db_link = process.env.DB_LINK
 
-async function main(){
-    await mongoose.connect(db_link);
-    app.listen(3000);
-}
-
-main();
 
 
 
