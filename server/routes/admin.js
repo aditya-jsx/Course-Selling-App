@@ -162,9 +162,18 @@ adminRouter.put("/course", Admin, async (req, res)=>{
 
 
 
-adminRouter.get("/course/all", Admin, (req, res)=>{
+adminRouter.get("/course/all", Admin, async (req, res)=>{
 
-    
+    const adminId = req.adminId;
+
+    const courses = await CoursesModel.find({
+        creatorId: adminId
+    })
+
+    res.json({
+        msg: "Your Courses",
+        courses
+    })
 
 
 
