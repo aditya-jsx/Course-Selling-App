@@ -158,3 +158,4 @@ module.exports = adminRouter;
 //! 12) we'll import the Router in the respected route file.(go to db.js)
 
 //! 21) let's create courses now (look at post => courses)
+//! 22) we should create a .env.example file to show that how our env file looks like but without the important keys
