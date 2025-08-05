@@ -129,18 +129,52 @@ adminRouter.post("/course", Admin, async (req, res)=>{
 
 
 
-adminRouter.put("/course", Admin, (req, res)=>{
-    res.json({
-        msg: "Edit a course"
+adminRouter.put("/course", Admin, async (req, res)=>{
+
+    const adminId = req.adminId;
+ 
+    const { title, description, imageUrl, price, courseId } = req.body;
+
+    //! here we'll update the db with the new details, (this updateOne function expects 3 things)
+    //! first is what courseId you want to change(and we also have to pass the creatorId, so the function will only find the course if it's made by the person who's trying to change it, otherwise any other person will be able to change it, if the ids dont't match then they'll not be able to edit it)
+    try{
+        const course = await CoursesModel.updateOne({
+        _id: courseId,
+        creatorId: adminId
+    }, {
+        title: title,
+        description: description,
+        ImgUrl: imageUrl,
+        Price: price,
     })
+    res.json({
+        msg: "Course Updated",
+        creatorId: course._id
+    })
+    }catch(e){
+        console.error("You can't update this course");
+        res.json({
+            error: e.message
+        })
+    } 
+    
 })
 
 
 
 adminRouter.get("/course/all", Admin, (req, res)=>{
-    res.json({
-        msg: "see all courses"
-    })
+
+    
+
+
+
+
+
+
+
+    // res.json({
+    //     msg: "see all courses"
+    // })
 })
 
 
@@ -157,5 +191,12 @@ module.exports = adminRouter;
 
 //! 12) we'll import the Router in the respected route file.(go to db.js)
 
-//! 21) let's create courses now (look at post => courses)
+//! 21) let's create courses now (look at post => course)
 //! 22) we should create a .env.example file to show that how our env file looks like but without the important keys
+
+//! 23) the dotenv library has zero dependencies which means it's doesn't depend on any other libraries(we want this because if it depends on any other library and that library has some vulnerability then this library will also have that vulnerability), so it's safe for us to use it to share our important details.
+
+
+//! 24) now the logic for editing the course (look at put => course)
+
+//! 25) now getting all the courses (look at get => course/all)
