@@ -4,7 +4,8 @@ const { AdminModel, UserModel } = require("../db")
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { z } = require("zod");
-const { JWT_ADMIN_PASSWORD } = require("../config")
+const { JWT_ADMIN_PASSWORD } = require("../config");
+const { Admin } = require("../middlewares/admin");
 
 
 
@@ -102,19 +103,19 @@ adminRouter.post("/signin", async (req, res)=>{
 
 
 
-adminRouter.post("/course", ()=>{
+adminRouter.post("/course", Admin, (req, res)=>{
     
 })
 
 
 
-adminRouter.put("/course", ()=>{
+adminRouter.put("/course", Admin, (req, res)=>{
 
 })
 
 
 
-adminRouter.get("/course/all", ()=>{
+adminRouter.get("/course/all", Admin, (req, res)=>{
 
 })
 

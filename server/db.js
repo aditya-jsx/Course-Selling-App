@@ -53,6 +53,6 @@ module.exports = {
 
 //! 13) make the schema for the users, admin(Course adder), courses, purchases, see excalidraw for the same for the diagram, connect to the mongoose server in the (index.js file).
 
-//! const AdminModel = mongoose.model('admin', Admin); mongooose consider this as admins, because it first converts the argument in lowercase which it already is and then it makes it plural,
+//! IMP ----> const AdminModel = mongoose.model('admin', Admin); mongooose consider this as admins, because it first converts the argument in lowercase which it already is and then it makes it plural,
 //! to override this we have to pass a third argument like this
 // const AdminModel = mongoose.model('admin', Admin, 'admin');
