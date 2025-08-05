@@ -4,12 +4,17 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const app = express();
+const userRouter = require("./routes/user")
+const adminRouter = require("./routes/admin")
+const courseRouter = require("./routes/course")
+app.use(express.json());
+
 
 app.use("/user", userRouter);
 app.use("/admin", adminRouter);
 app.use("/course", courseRouter);
 
-const db_link = process.env.DB_LINK
+const db_link = process.env.DB_LINK;
 
 async function main(){
     await mongoose.connect(db_link);

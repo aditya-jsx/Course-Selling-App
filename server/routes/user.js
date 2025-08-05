@@ -22,7 +22,7 @@ userRouter.get("/purchases", ()=>{
 })
 
 
-module.exports = { userRouter : userRouter }
+module.exports = userRouter;
 
 
 //! 5) here we don't have to write user in the routes as it'll already added in the route from the index file

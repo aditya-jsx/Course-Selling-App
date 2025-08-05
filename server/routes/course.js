@@ -22,7 +22,4 @@ courseRouter.get("/purchases", ()=>{
 })
 
 
-module.exports = { courseRouter : courseRouter }
-
-
-
+module.exports = courseRouter;

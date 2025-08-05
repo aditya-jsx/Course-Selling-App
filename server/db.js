@@ -29,12 +29,11 @@ const Courses = new Schema({
 const Purchases = new Schema({
     userId: ObjectId,
     courseId: ObjectId,
-    userId: ObjectId
 })
 
 
 const UserModel = mongoose.model('users', User);
-const AdminModel = mongoose.model('admin', Admin);
+const AdminModel = mongoose.model('admins', Admin);
 const CoursesModel = mongoose.model('courses', Courses);
 const PurchasesModel = mongoose.model('purchases', Purchases);
 
@@ -53,3 +52,7 @@ module.exports = {
 //! this is the schema for our Database
 
 //! 13) make the schema for the users, admin(Course adder), courses, purchases, see excalidraw for the same for the diagram, connect to the mongoose server in the (index.js file).
+
+//! const AdminModel = mongoose.model('admin', Admin); mongooose consider this as admins, because it first converts the argument in lowercase which it already is and then it makes it plural,
+//! to override this we have to pass a third argument like this
+// const AdminModel = mongoose.model('admin', Admin, 'admin');
