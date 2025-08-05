@@ -1,12 +1,11 @@
 const { Router } = require("express");
 const adminRouter = Router();
-const { AdminModel } = require("../db")
+const { AdminModel, CoursesModel } = require("../db")
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { z } = require("zod");
 const { JWT_ADMIN_PASSWORD } = require("../config");
 const { Admin } = require("../middlewares/admin");
-
 
 
 adminRouter.post("/signup", async (req, res)=>{
@@ -103,10 +102,29 @@ adminRouter.post("/signin", async (req, res)=>{
 
 
 
-adminRouter.post("/course", Admin, (req, res)=>{
-    res.json({
-        msg: "Create a course"
+adminRouter.post("/course", Admin, async (req, res)=>{
+
+    const adminId = req.adminId;
+
+    // now we expect the user to give us 
+    const { title, description, imageUrl, price } = req.body;
+
+    // and then we have to put these things in the db
+    const course = await CoursesModel.create({
+        title: title,
+        description: description,
+        ImgUrl: imageUrl,
+        Price: price, 
+        creatorId: adminId
     })
+    //! see the video of kirat creating a web3 saas in 6 hours(to understand how to build the pipeline for the user to upload images as well)
+
+
+    res.json({
+        msg: "Course Created",
+        creatorId: course._id
+    })
+
 })
 
 
@@ -138,3 +156,5 @@ module.exports = adminRouter;
 //! 11) now the admin can create a course and also change a course so we need to make endpoints for that as well, and we can also make this strict by using a middleware for all the endpoints after signup and signin.
 
 //! 12) we'll import the Router in the respected route file.(go to db.js)
+
+//! 21) let's create courses now (look at post => courses)

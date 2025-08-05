@@ -8,10 +8,6 @@ const { JWT_USER_PASSWORD } = require("../config");
 const { User } = require("../middlewares/user");
 
 
-
-
-
-
 userRouter.post("/signup", async (req, res)=>{
 
     //! Input Validation using Zod
@@ -117,5 +113,4 @@ module.exports = userRouter;
 //! 5) here we don't have to write user in the routes as it'll already added in the route from the index file
 //! 6) go back to index.js
 
-//! 20) import auth middleware for user and use it.
-
+//! 20) import auth middleware for user and use it. (everything working fine) go to admin route

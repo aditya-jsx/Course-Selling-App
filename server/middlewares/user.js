@@ -7,7 +7,7 @@ function User(req, res, next){
     const response = jwt.verify(token, JWT_USER_PASSWORD);
 
     if(response){
-        req.userId = response.userId;
+        req.userId = response.id;
         next();
     }else{
         res.status(403).json({
