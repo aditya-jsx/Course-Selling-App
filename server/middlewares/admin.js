@@ -6,7 +6,7 @@ function Admin(req, res, next){
     const response = jwt.verify(token, JWT_ADMIN_PASSWORD);
 
     if(response){
-        req.userId = response.userId;
+        req.adminId = response.adminId;
         next();
     }else{
         res.status(403).json({
@@ -19,4 +19,4 @@ module.exports = { Admin }
 
 
 
-//! 18) make auth middleware for admin to verify token and send the userId.
+//! 18) make auth middleware for admin to verify token and send the adminId.

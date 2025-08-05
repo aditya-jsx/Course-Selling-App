@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const adminRouter = Router();
-const { AdminModel, UserModel } = require("../db")
+const { AdminModel } = require("../db")
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { z } = require("zod");
@@ -78,11 +78,11 @@ adminRouter.post("/signin", async (req, res)=>{
     const { email, password } = req.body;
 
     // finding user in DB
-    const user = await UserModel.findOne({ email:email })
+    const admin = await AdminModel.findOne({ email:email })
 
-    if(!user){
+    if(!admin){
         res.status(403).json({
-            msg: "User could not be found"
+            msg: "Admin could not be found"
         })
     }
 
