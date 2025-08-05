@@ -1,4 +1,5 @@
 const { JWT_USER_PASSWORD } = require("../config");
+const jwt = require("jsonwebtoken");
 
 function User(req, res, next){
     const token = req.headers.token;
@@ -19,4 +20,4 @@ module.exports = { User }
 
 
 
-//! 19) make auth middleware for user to verify token and send the userId.
+//! 19) make auth middleware for user to verify token and send the userId. (go to user route)

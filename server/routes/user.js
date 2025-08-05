@@ -104,8 +104,10 @@ userRouter.post("/signin", async (req, res)=>{
 
 
 
-userRouter.get("/purchases", ()=>{
-
+userRouter.get("/purchases", User, (req, res)=>{
+    res.json({
+        msg: "purchase a course"
+    })
 })
 
 
@@ -114,3 +116,6 @@ module.exports = userRouter;
 
 //! 5) here we don't have to write user in the routes as it'll already added in the route from the index file
 //! 6) go back to index.js
+
+//! 20) import auth middleware for user and use it.
+

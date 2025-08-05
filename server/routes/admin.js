@@ -87,12 +87,12 @@ adminRouter.post("/signin", async (req, res)=>{
     }
 
     // matching passowrds
-    const passwordMatch = bcrypt.compare(password, user.password);
+    const passwordMatch = bcrypt.compare(password, admin.password);
 
     // returning token
     if(passwordMatch){
         const token = jwt.sign({
-            id: user._id.toString()
+            id: admin._id.toString()
         }, JWT_ADMIN_PASSWORD)
         res.json({ token: token })
     }else{
@@ -104,19 +104,25 @@ adminRouter.post("/signin", async (req, res)=>{
 
 
 adminRouter.post("/course", Admin, (req, res)=>{
-    
+    res.json({
+        msg: "Create a course"
+    })
 })
 
 
 
 adminRouter.put("/course", Admin, (req, res)=>{
-
+    res.json({
+        msg: "Edit a course"
+    })
 })
 
 
 
 adminRouter.get("/course/all", Admin, (req, res)=>{
-
+    res.json({
+        msg: "see all courses"
+    })
 })
 
 
