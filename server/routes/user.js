@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const userRouter = Router();
-const { UserModel } = require("../db")
+const { UserModel, CoursesModel } = require("../db")
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { z } = require("zod");
@@ -100,9 +100,23 @@ userRouter.post("/signin", async (req, res)=>{
 
 
 
-userRouter.get("/purchases", User, (req, res)=>{
+userRouter.get("/purchases", User, async (req, res)=>{
+
+    const userId = req.userId;
+
+    const purchases = await PurchasesModel.find({
+            userId: userId
+    })
+
+
+    //! ugly way to show the purchases to the user
+    const coursesData = await CoursesModel.find({
+        _id: { $in: purchases.map(x => x.courseId) }
+    })
+
     res.json({
-        msg: "purchase a course"
+        purchases,
+        courseData
     })
 })
 
@@ -114,3 +128,24 @@ module.exports = userRouter;
 //! 6) go back to index.js
 
 //! 20) import auth middleware for user and use it. (everything working fine) go to admin route
+
+//! 27) make the purchase routes so that user can be able to make a purchase
+
+//! 28) go to course.js
+
+//! 36) here in the purchases endpoint the user should be able to see all of their purchases.
+
+//! 37) now if the user looks at it's purchases, according to our code right now, they'll only be able to see only the courseId and their id, as our db only contains those two things.
+
+//! 38) we want out user to see the course content as well, so the ugly way to do this is in purhcases endpoint.
+
+//! 39) the better way to do this is using referencing in mongo DB covered in the offline video
+
+
+
+
+//! Good to haves: - 
+
+//! --->  Use cookies instead of JWT for auth
+//! --->  Add a rate limiting middleware
+//! --->  Frontend in React

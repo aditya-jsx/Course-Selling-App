@@ -32,6 +32,8 @@ const Purchases = new Schema({
 })
 
 
+//! we sould have a course content here
+
 const UserModel = mongoose.model('users', User);
 const AdminModel = mongoose.model('admins', Admin);
 const CoursesModel = mongoose.model('courses', Courses);
@@ -56,3 +58,8 @@ module.exports = {
 //! IMP ----> const AdminModel = mongoose.model('admin', Admin); mongooose consider this as admins, because it first converts the argument in lowercase which it already is and then it makes it plural,
 //! to override this we have to pass a third argument like this
 // const AdminModel = mongoose.model('admin', Admin, 'admin');
+
+
+//! 31) here we should have a scheman for the course content in which we can share our course
+
+//! 32) go to course.js

@@ -209,3 +209,5 @@ module.exports = adminRouter;
 //! 24) now the logic for editing the course (look at put => course)
 
 //! 25) now getting all the courses (look at get => course/all)
+
+//! 26) go to user route
