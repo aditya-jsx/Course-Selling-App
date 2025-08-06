@@ -74,28 +74,69 @@ adminRouter.post("/signup", async (req, res)=>{
 
 adminRouter.post("/signin", async (req, res)=>{
 
-    const { email, password } = req.body;
+    const requiredBody = z.object({
+      email: z.string().email(),
+      password: z
+        .string()
+        .min(8, "Password must be at least 8 characters")
+        .regex(/[A-Z]/, "Must contain an uppercase letter")
+        .regex(/[a-z]/, "Must contain a lowercase letter")
+        .regex(/[!@#$%^&*(),.?":{}|<>]/, "Must contain a special character")
+    });
 
-    // finding user in DB
-    const admin = await AdminModel.findOne({ email:email })
-
-    if(!admin){
-        res.status(403).json({
-            msg: "Admin could not be found"
+    
+    const parsedData = requiredBody.safeParse(req.body);
+    
+    if(!parsedData.success){
+        return res.status(400).json({
+            msg: "Invalid Format"
         })
     }
 
-    // matching passowrds
-    const passwordMatch = bcrypt.compare(password, admin.password);
+    const { email, password } = parsedData.data;
 
-    // returning token
-    if(passwordMatch){
+    try{
+        // finding user in DB
+        const admin = await AdminModel.findOne({ email:email })
+    
+        if(!admin){
+            res.status(403).json({
+                msg: "Admin could not be found"
+            })
+        }
+
+        // matching passowrds
+        const passwordMatch = await bcrypt.compare(password, admin.password);
+
+        if(!passwordMatch){
+            res.json({
+                msg: "Invalid email or Password",
+            });
+        }
+
         const token = jwt.sign({
             id: admin._id.toString()
-        }, JWT_ADMIN_PASSWORD)
-        res.json({ token: token })
-    }else{
-        msg: "Incorrect Credentials"
+        }, JWT_ADMIN_PASSWORD, { expiresIn: "1h" })
+        // res.json(token)
+
+        // setting the jwt as the cookie
+        res.cookie('token', token, {
+            httpOnly: true, // Prevents client-side JS from accessing the cookie
+            secure: process.env.NODE_ENV === 'production', // Use 'secure' in production for HTTPS
+            maxAge: 1000 * 60 * 60, // 1 hour expiration
+            sameSite: 'Lax', // Protects against CSRF
+        });
+
+        return res.status(200).json({
+            msg: "Signin successful."
+        });
+
+    }catch(e){
+        console.error("Database error during Signin: ", e);
+        return res.status(500).json({
+            msg: "An unexpected error occurred during signin.",
+            error: e.message,
+        });
     }
 
 })
@@ -122,7 +163,7 @@ adminRouter.post("/course", Admin, async (req, res)=>{
 
     res.json({
         msg: "Course Created",
-        creatorId: course._id
+        courseId: course._id
     })
 
 })
@@ -130,36 +171,70 @@ adminRouter.post("/course", Admin, async (req, res)=>{
 
 
 adminRouter.put("/course", Admin, async (req, res)=>{
-
     const adminId = req.adminId;
- 
-    const { title, description, imageUrl, price, courseId } = req.body;
-
-    //! here we'll update the db with the new details, (this updateOne function expects 3 things)
-    //! first is what courseId you want to change(and we also have to pass the creatorId, so the function will only find the course if it's made by the person who's trying to change it, otherwise any other person will be able to change it, if the ids dont't match then they'll not be able to edit it)
-    try{
-        const course = await CoursesModel.updateOne({
-        _id: courseId,
-        creatorId: adminId
-    }, {
-        title: title,
-        description: description,
-        ImgUrl: imageUrl,
-        Price: price,
-    })
-    res.json({
-        msg: "Course Updated",
-        creatorId: course._id
-    })
-    }catch(e){
-        console.error("You can't update this course");
-        res.json({
-            error: e.message
-        })
-    } 
     
-})
+    // Add Zod validation for course updates
+    const courseUpdateSchema = z.object({
+        courseId: z.string().nonempty("Course ID is required."),
+        title: z.string().optional(),
+        description: z.string().optional(),
+        imageUrl: z.string().optional(),
+        price: z.number().positive("Price must be a positive number.").optional(),
+    });
 
+    const parsedData = courseUpdateSchema.safeParse(req.body);
+    
+    if(!parsedData.success) {
+        return res.status(400).json({
+            msg: "Invalid update format:",
+            error: parsedData.error
+        });
+    }
+    
+    const { courseId, title, description, imageUrl, price } = parsedData.data;
+
+    try{
+
+        //! this wasn't working
+        // const result = await CoursesModel.updateOne({
+        //     _id: courseId,
+        //     creatorId: adminId
+        // }, {
+        //     title: title,
+        //     description: description,
+        //     ImgUrl: imageUrl,
+        //     Price: price,
+        // });
+        
+
+        //! FIIINNNEEEE I'LL DO IT MYSELF
+        const result = await CoursesModel.findOne({ _id: courseId, creatorId: adminId })
+
+        if(!result){
+            return res.status(400).json({
+                msg: "You can not update this file"
+            })
+        }
+
+        await result.updateOne({
+            title: title,
+            description: description,
+            ImgUrl: imageUrl,
+            Price: price
+        })
+
+        // The update was successful
+        return res.json({
+            msg: "Course Updated"
+        });
+    }catch(e){
+        console.error("Error updating course:", e);
+        return res.status(500).json({
+            msg: "An unexpected error occurred.",
+            error: e.message
+        });
+    } 
+});
 
 
 adminRouter.get("/course/all", Admin, async (req, res)=>{
@@ -211,3 +286,75 @@ module.exports = adminRouter;
 //! 25) now getting all the courses (look at get => course/all)
 
 //! 26) go to user route
+
+
+
+
+
+
+
+//! here we'll update the db with the new details, (this updateOne function expects 3 things)
+//! first is what courseId you want to change(and we also have to pass the creatorId, so the function will only find the course if it's made by the person who's trying to change it, otherwise any other person will be able to change it, if the ids dont't match then they'll not be able to edit it)
+// const result = await CoursesModel.updateOne({
+//         _id: courseId,
+//         creatorId: adminId
+// }, {
+//     title: title,
+//     description: description,
+//     ImgUrl: imageUrl,
+//     Price: price,
+// })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// adminRouter.put("/course", Admin, async (req, res)=>{
+
+//     const adminId = req.adminId;
+ 
+//     const { title, description, imageUrl, price, courseId } = req.body;
+
+//     
+//     try{
+//         const result = await CoursesModel.updateOne({
+//         _id: courseId,
+//         creatorId: adminId
+//     }, {
+//         title: title,
+//         description: description,
+//         ImgUrl: imageUrl,
+//         Price: price,
+//     })
+
+//     if (result.nModified === 0) {
+//             // A course was not found that matched both the ID and the creator,
+//             // which is the desired behavior for an un-authorized update.
+//             return res.status(401).json({
+//                 msg: "Unauthorized: You can only update courses you created."
+//             });
+//     }
+
+//     res.json({
+//         msg: "Course Updated",
+//         creatorId: result._id
+//     })
+//     }catch(e){
+//         console.error("You can't update this course");
+//         res.json({
+//             error: e.message
+//         })
+//     } 
+    
+// })

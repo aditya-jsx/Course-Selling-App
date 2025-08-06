@@ -105,7 +105,7 @@ userRouter.get("/purchases", User, async (req, res)=>{
     const userId = req.userId;
 
     const purchases = await PurchasesModel.find({
-            userId: userId
+        userId: userId
     })
 
 
@@ -127,7 +127,7 @@ module.exports = userRouter;
 //! 5) here we don't have to write user in the routes as it'll already added in the route from the index file
 //! 6) go back to index.js
 
-//! 20) import auth middleware for user and use it. (everything working fine) go to admin route
+//! 20) import auth middleware for user and use itaa. (everything working fine) go to admin route
 
 //! 27) make the purchase routes so that user can be able to make a purchase
 
