@@ -116,7 +116,7 @@ userRouter.get("/purchases", User, async (req, res)=>{
 
     res.json({
         purchases,
-        courseData
+        coursesData
     })
 })
 
